@@ -3,31 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
     <title>Cachimboz Web</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'inter': ['Inter', 'sans-serif'] },
-                    colors: {
-                        'cachimboz-dark': '#3e088f',
-                        'cachimboz-mid': '#6D28D9',
-                        'cachimboz-light': '#8B5CF6',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { -webkit-font-smoothing: antialiased; }
-        .home-bg { background-image: linear-gradient(180deg, #3e088f 0%, #581c87 100%); }
-    </style>
+    <!--  mejora carga fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   
 </head>
-<body class="font-inter text-slate-100 min-h-screen home-bg">
-    
+<body class="font-inter text-slate-100 min-h-screen home-bg antialiased">
     <div id="app"></div>
 
     <script>
