@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cachimboz Web</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'inter': ['Inter', 'sans-serif'] },
+                    colors: {
+                        'cachimboz-dark': '#3e088f',
+                        'cachimboz-mid': '#6D28D9',
+                        'cachimboz-light': '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-font-smoothing: antialiased; }
+        .home-bg { background-image: linear-gradient(180deg, #3e088f 0%, #581c87 100%); }
+    </style>
+</head>
+<body class="font-inter text-slate-100 min-h-screen home-bg">
+    
+    <div id="app"></div>
+
+    <script>
+        // --- 1. CONFIGURACIÓN DE ENLACES WEB ---
+        // Aquí definimos a qué ID de curso apunta cada botón
+        const ALL_COURSES = [
+            { id: 'aritmetica', name: 'Aritmética', icon: '🧮', link: 'clase.html?id=aritmetica' },
+            { id: 'algebra', name: 'Álgebra', icon: '📐', link: 'clase.html?id=algebra' },
+            { id: 'competencia', name: 'Lenguaje', icon: '📝', link: 'clase.html?id=lenguaje' },
+            { id: 'fisica', name: 'Física', icon: '⚛️', link: 'clase.html?id=fisica' },
+            { id: 'quimica', name: 'Química', icon: '🧪', link: 'clase.html?id=quimica' },
+            { id: 'geo_trigo', name: 'Geometría y Trig.', icon: '📏', link: 'clase.html?id=geometria' },
+            { id: 'biologia', name: 'Biología', icon: '🧬', link: 'clase.html?id=biologia' },
+            { id: 'geografia', name: 'Geografía', icon: '🌐', link: 'clase.html?id=geografia' },
+            { id: 'historia', name: 'Historia', icon: '📜', link: 'clase.html?id=historia' },
+            { id: 'economia', name: 'Economía', icon: '💹', link: 'clase.html?id=economia' },
+            { id: 'civica', name: 'Cívica', icon: '🏛️', link: 'clase.html?id=civica' },
+            { id: 'psicologia', name: 'Psicología', icon: '🔱', link: 'clase.html?id=psicologia' },
+            { id: 'filosofia', name: 'Filosofía', icon: '🤔', link: 'clase.html?id=filosofia' }
+        ];
+
+        // Estado simplificado (Directo al Home)
+        let appState = {
+            currentView: 'home', // FORZADO AL HOME
+            formData: { Nombre: "Cachimbo" }, // Nombre por defecto si no hay registro
+            userSelection: { university: 'UNSAAC', area: 'ingenieria' } // Valores por defecto
+        };
+
+        function initApp() {
+            // Intentar recuperar datos guardados si existen
+            const savedData = localStorage.getItem('formData');
+            if(savedData) appState.formData = JSON.parse(savedData);
+            
+            renderHome();
+        }
+
+        function renderHome() {
+            const userName = appState.formData.Nombre.split(' ')[0];
+            const streak = calculateStreak();
+
+            document.getElementById('app').innerHTML = `
+                <div class="max-w-7xl mx-auto p-6 sm:p-8">
+                    <div class="space-y-6 sm:space-y-8">
+                        
+                        <header class="flex justify-between items-center gap-4">
+                            <div class="flex-1">
+                                <p class="text-slate-300">¡Hola de nuevo!</p>
+                                <h1 class="text-3xl sm:text-4xl font-extrabold text-white">${userName}</h1>
+                            </div>
+                            <div class="flex items-center gap-2 text-right">
+                                <div>
+                                    <div class="font-bold text-lg sm:text-xl text-white">${streak} Días</div>
+                                    <div class="text-xs text-amber-300 font-medium">Racha Activa</div>
+                                </div>
+                                <span class="text-3xl sm:text-4xl">🔥</span>
+                            </div>
+                        </header>
+
+                        <section id="continue-section">
+                            <div class="bg-gradient-to-r from-cachimboz-mid to-cachimboz-light p-6 rounded-2xl shadow-xl text-white relative overflow-hidden">
+                                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full"></div>
+                                <p class="text-sm font-medium opacity-80 uppercase tracking-wider">Continuar Curso</p>
+                                <h2 id="last-course-name" class="text-3xl font-bold mt-2 mb-4">Selecciona un curso</h2>
+                                <a id="last-course-link" href="#" class="inline-block mt-4 font-semibold text-sm bg-white text-cachimboz-mid hover:bg-slate-100 px-5 py-2.5 rounded-lg transition-colors shadow">
+                                    Ir a la lección →
+                                </a>
+                            </div>
+                        </section>
+
+                        <section>
+                            <h3 class="text-xl font-bold text-white mb-4">Cursos completos</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+                                ${ALL_COURSES.map(course => `
+                                    <a href="${course.link}" class="bg-black/20 p-4 rounded-2xl shadow-sm hover:bg-black/30 transition-all group backdrop-blur-sm course-link" onclick="saveLastCourse('${course.name}', '${course.link}')">
+                                        <div class="w-12 h-12 bg-cachimboz-light/20 rounded-lg flex items-center justify-center mb-3 group-hover:bg-cachimboz-light/30 transition-colors">
+                                            <span class="text-2xl">${course.icon}</span>
+                                        </div>
+                                        <h4 class="font-bold text-white text-lg">${course.name}</h4>
+                                        <span class="text-xs font-semibold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">Disponible</span>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </section>
+
+                        <div class="h-16"></div>
+                    </div>
+                </div>
+            `;
+            
+            loadLastCourse();
+        }
+
+        function calculateStreak() {
+            // Lógica simple de racha
+            return localStorage.getItem('streak') || 1;
+        }
+
+        function saveLastCourse(name, link) {
+            localStorage.setItem('lastCourseName', name);
+            localStorage.setItem('lastCourseLink', link);
+        }
+
+        function loadLastCourse() {
+            const savedName = localStorage.getItem('lastCourseName');
+            const savedLink = localStorage.getItem('lastCourseLink');
+            if(savedName && savedLink) {
+                document.getElementById('last-course-name').textContent = savedName;
+                document.getElementById('last-course-link').href = savedLink;
+                document.getElementById('last-course-link').textContent = "Continuar " + savedName + " →";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
