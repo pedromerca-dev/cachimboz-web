@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cachimboz Premium - Edición PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* COLORES BASE */
+            --bg-gradient: linear-gradient(135deg, #1a0b2e 0%, #3e088f 100%);
+            --card-glass: rgba(30, 30, 50, 0.7);
+            --card-border: rgba(255, 255, 255, 0.15);
+            
+            /* ACENTOS SOBRIOS */
+            --neon-green: #00e676;
+            --gold: #FFD700;
+            --gold-gradient: linear-gradient(to right, #FFD700, #FDB931, #FFD700);
+            --pro-blue: #00b0ff;
+            --pro-gradient: linear-gradient(135deg, #00b0ff 0%, #007bb2 100%);
+            
+            /* BILLETERAS */
+            --yape-color: #5f0b72;
+            --plin-color: #00B0FF;
+
+            --text: #ffffff;
+            --text-muted: #b0b0d0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 120px; 
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+
+        /* HEADER */
+        .header { text-align: center; margin-bottom: 20px; margin-top: 10px; }
+        .header h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .pro-gold { background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; text-transform: uppercase; display: inline-block; }
+        .header p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; }
+
+        /* VERIFICACIÓN */
+        .verify-pill-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: white; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .verify-box { display: none; margin-top: 15px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 16px; border: 1px solid var(--card-border); animation: fadeIn 0.3s ease; }
+        .verify-input { width: 100%; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; outline: none; margin-bottom: 12px; font-size: 1rem; }
+        .verify-action-btn { width: 100%; padding: 12px; background: var(--pro-blue); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 1rem; }
+
+        /* STATUS BAR */
+        .user-status-bar { display: none; background: rgba(0, 176, 255, 0.1); border: 1px solid var(--pro-blue); border-radius: 16px; padding: 15px; margin-bottom: 25px; align-items: center; gap: 15px; animation: popIn 0.5s ease; position: relative; overflow: hidden; }
+        .user-avatar { width: 40px; height: 40px; background: var(--pro-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 1.2rem; z-index: 2; }
+        .status-glow { position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(0, 176, 255, 0.1), transparent); animation: shine 3s infinite; }
+
+        /* VIDEO */
+        .video-box { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: 16px; overflow: hidden; box-shadow: 0 15px 40px rgba(18, 124, 188, 0.3); border: 1px solid var(--card-border); margin-bottom: 25px; }
+        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* PLANES */
+        .plans-container { display: flex; flex-direction: column; gap: 15px; }
+        .plan-card { background: var(--card-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 2px solid var(--card-border); border-radius: 16px; padding: 20px; position: relative; transition: all 0.3s ease; cursor: pointer; overflow: hidden; }
+        .plan-card.selected { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.5); transform: scale(1.02); z-index: 2; }
+        .plan-card.upgrade-mode { border-color: var(--pro-blue) !important; box-shadow: 0 0 25px rgba(0, 176, 255, 0.25); }
+        
+        .current-plan-tag { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); color: white; font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: none; border: 1px solid rgba(255,255,255,0.3); }
+        .plan-card.is-current .current-plan-tag { display: block; }
+        .plan-card.premium-gold { border-color: var(--gold); }
+        
+        .badge-top { position: absolute; top: 0; right: 0; font-size: 0.7rem; font-weight: 800; color: #000; padding: 4px 12px; border-bottom-left-radius: 12px; text-transform: uppercase; }
+        .badge-offer { background: var(--gold-gradient); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+        .price-big { font-size: 2.2rem; font-weight: 800; line-height: 1; color: #fff; }
+        .price-big.offer-text { color: var(--gold); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        .price-big.blue-text { color: var(--pro-blue); text-shadow: 0 0 10px rgba(0, 176, 255, 0.5); }
+        
+        .price-old { text-decoration: line-through; color: #888; font-size: 1rem; margin-left: 8px; }
+        .plan-desc { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+
+        /* BENEFICIOS */
+        .benefits-section { margin-top: 25px; padding: 0 10px; }
+        .benefit-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; color: #e0e0e0; font-size: 0.9rem; }
+        .check-icon { color: var(--neon-green); font-size: 1.1rem; flex-shrink: 0; }
+
+        .trust-section { margin-top: 40px; text-align: center; margin-bottom: 20px; opacity: 0.8; }
+        .logos-row { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 10px; }
+        .logo-text { font-weight: 800; font-size: 1.1rem; color: #fff; opacity: 0.7; }
+
+        /* FOOTER & MODAL */
+        .sticky-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(20, 20, 35, 0.95); backdrop-filter: blur(15px); padding: 15px 20px; border-top: 1px solid var(--card-border); z-index: 50; }
+        
+        .btn-main { 
+            width: 100%; max-width: 500px; margin: 0 auto; display: block; 
+            background: var(--pro-gradient); color: white; 
+            padding: 16px; border-radius: 12px; 
+            font-weight: 800; font-size: 1.1rem; border: none; 
+            transition: all 0.3s; box-shadow: 0 4px 15px rgba(0, 176, 255, 0.3);
+        }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; display: flex; justify-content: center; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px); }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-sheet { background: #1a1a29; width: 100%; max-width: 500px; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 30px 25px; border-top: 1px solid rgba(255,255,255,0.1); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); max-height: 85vh; overflow-y: auto; text-align: center; }
+        .modal-overlay.active .modal-sheet { transform: translateY(0); }
+        
+        .method-box { border: 1px solid var(--card-border); padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; text-align: left; transition: all 0.3s ease; }
+        .method-box.active { border-color: var(--neon-green); background: rgba(0, 230, 118, 0.05); }
+        
+        .method-content { display: none; margin-top: 15px; animation: fadeIn 0.3s ease; text-align: center; }
+        .method-content.active { display: block; }
+
+        /* ESTILOS BILLETERAS DIGITALES (CHIPS) */
+        .wallet-chips { display: flex; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 4px; margin-bottom: 15px; }
+        .wallet-chip { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-weight: 700; font-size: 0.95rem; color: #888; cursor: pointer; transition: all 0.3s ease; }
+        .wallet-chip.active-yape { background: var(--yape-color); color: white; box-shadow: 0 2px 8px rgba(95, 11, 114, 0.4); }
+        .wallet-chip.active-plin { background: var(--plin-color); color: white; box-shadow: 0 2px 8px rgba(0, 176, 255, 0.4); }
+
+        .wallet-view { display: none; animation: fadeIn 0.3s ease; }
+        .wallet-view.active { display: block; }
+
+        .qr-img { width: 220px; height: 220px; border: 3px solid transparent; border-radius: 15px; margin: 10px auto; display: block; transition: border-color 0.3s ease; }
+        .qr-img.border-yape { border-color: var(--yape-color); }
+        .qr-img.border-plin { border-color: var(--plin-color); }
+
+        .yape-number { font-family: monospace; font-size: 1.4rem; padding: 10px; border-radius: 8px; display: inline-block; margin: 10px auto; transition: all 0.3s ease; }
+        .yape-number.style-yape { color: #ffffff; background: var(--yape-color); box-shadow: 0 2px 8px rgba(95, 11, 114, 0.3); }
+        .yape-number.style-plin { color: var(--plin-color); background: rgba(0, 176, 255, 0.1); }
+
+        .copy-btn { background: var(--pro-blue); color: #fff; font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; cursor: pointer; margin-left: 10px; border: none; }
+
+        /* REGALO - PRO STYLE */
+        .gift-toggle-container { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between; }
+        .gift-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .gift-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--pro-blue); }
+        input:checked + .slider:before { transform: translateX(22px); }
+        .gift-form { display: none; text-align: left; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; }
+        .gift-input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; margin-bottom: 10px; }
+        
+        .btn-apply { width: 100%; background: var(--neon-green); color: #000; padding: 16px; border-radius: 12px; border: none; font-weight: 800; margin-top: 15px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .close-modal-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #888; background: none; border: none; padding: 10px; }
+
+        @keyframes shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<canvas class="confetti-canvas" id="confetti" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:300;"></canvas>
+
+<div class="container">
+    <div class="header">
+        <h1>Acceso Cachimboz <span class="pro-gold">PRO</span></h1>
+        <p>Asegura tu ingreso 2026 ahora</p>
+        <div class="verify-pill-btn" onclick="toggleVerifyBox()"><i class="fas fa-user-check"></i> ¿Ya eres PRO? Validar Acceso</div>
+    </div>
+
+    <div class="verify-box" id="verify-box">
+        <h4 style="color:white; margin-bottom:10px;">Ingresa tu correo registrado:</h4>
+        <input type="email" id="v-email" class="verify-input" placeholder="ejemplo@gmail.com">
+        <button class="verify-action-btn" onclick="verifyUser()" id="btn-verify-action">Validar Ahora</button>
+        <div id="v-msg" style="font-size: 0.8rem; margin-top: 10px; text-align: center; color: #ccc;"></div>
+    </div>
+
+    <div class="user-status-bar" id="user-status-bar">
+        <div class="status-glow"></div>
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <div style="z-index: 2;">
+            <div style="font-weight: 800; color: white; font-size:1rem;" id="user-plan-name">Plan Mensual</div>
+            <div style="font-size: 0.85rem; color: #b0e0ff;" id="user-upgrade-msg">Tienes una oferta de Upgrade 👇</div>
+        </div>
+    </div>
+
+    <div class="video-box">
+        <iframe src="https://www.youtube.com/embed/qn-6OWnsoUs?controls=0&modestbranding=1" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <div class="plans-container">
+        
+        <div class="plan-card selected" id="card-annual" onclick="selectPlan('annual')">
+            <div class="current-plan-tag">TU PLAN ACTUAL</div>
+            <div class="badge-top badge-offer" id="badge-annual">OFERTA ESTRELLA</div>
+            <div class="plan-header"><span style="font-weight: 700; font-size: 1.1rem;">Plan Anual 2026</span></div>
+            <div style="display: flex; align-items: baseline; gap: 5px;"><span style="font-size:1rem;color:var(--text-muted);">S/.</span><span class="price-big offer-text" id="price-annual">120</span><span class="price-old" id="old-annual">S/. 360</span></div>
+            <p class="plan-desc">Todo el material por 1 año completo.<br><span style="font-size:0.8rem; color:var(--neon-green); font-weight: 700;">Asegura toda tu preparación anual 🎁</span></p>
+        </div>
+
+        <div class="plan-card premium-gold" id="card-cycle" onclick="selectPlan('cycle')">
+            <div class="current-plan-tag">TU PLAN ACTUAL</div>
+            <div class="plan-header"><span style="font-weight: 700; font-size: 1.1rem; color:#FFD700">Plan Ciclo (4 meses) ⏳</span></div>
+            <div style="display: flex; align-items: baseline; gap: 5px;"><span style="font-size:1rem;color:var(--text-muted);">S/.</span><span class="price-big" id="price-cycle">69</span></div>
+            <p class="plan-desc">Ideal para tu próximo examen de admisión.<br><span style="font-size:0.75rem; color:var(--neon-green)">🚀 Cobertura perfecta a corto plazo</span></p>
+        </div>
+
+        <div class="plan-card" id="card-month" onclick="selectPlan('month')">
+            <div class="current-plan-tag">TU PLAN ACTUAL</div>
+            <div class="plan-header"><span style="font-weight: 700; font-size: 1.1rem;">Plan Mensual</span></div>
+            <div style="display: flex; align-items: baseline; gap: 5px;"><span style="font-size:1rem;color:var(--text-muted);">S/.</span><span class="price-big">30</span><span style="font-size:1rem;color:var(--text-muted);">/mes</span></div>
+            <p class="plan-desc">Acceso a todo por 1 mes.</p>
+        </div>
+    </div>
+
+    <div class="benefits-section">
+        <h3 style="color:white; font-size: 1rem; margin-bottom: 15px;">Incluye:</h3>
+        <div class="benefit-item"><span class="check-icon">✔</span> Cursos completos por temas</div>
+        <div class="benefit-item"><span class="check-icon">✔</span> Banco de preguntas ilimitado</div>
+        <div class="benefit-item"><span class="check-icon">✔</span> Simulacros tipo admisión</div>
+        <div class="benefit-item"><span class="check-icon">✔</span> Asistente IA 24/7</div>
+    </div>
+
+    <div class="trust-section">
+        <div class="trust-label">Reconocidos por:</div>
+        <div class="logos-row">
+            <div class="logo-text">Forbes</div>
+            <div class="logo-text">Google</div>
+            <div class="logo-text">ProInnóvate</div>
+        </div>
+    </div>
+</div>
+
+<div class="sticky-footer">
+    <button class="btn-main" id="main-cta" onclick="openPaymentModal()">PAGAR S/. 120 AHORA</button>
+</div>
+
+<div class="modal-overlay" id="payment-modal">
+    <div class="modal-sheet">
+        <button class="close-modal-btn" onclick="closeAllModals()">×</button>
+        <h3 style="font-size: 1.3rem; margin-bottom: 5px; color: var(--neon-green);">¡Excelente decisión!</h3>
+        <div style="background: rgba(0, 230, 118, 0.1); padding: 10px; border-radius: 12px; margin: 15px 0; border: 1px solid var(--neon-green);">
+            Monto a Pagar: <strong style="font-size: 1.4rem; color: var(--neon-green);" id="modal-final-amount">S/. 0.00</strong>
+        </div>
+
+        <div class="method-box active" onclick="setMethod('wallets')" id="b-wallets">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <b>🚀 Yape y Plin</b>
+                <div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Icono_de_la_aplicaci%C3%B3n_Yape.png" width="20" style="margin-right: 5px;">
+                    <img src="https://www.bbva.pe/content/dam/public-web/peru/images/promo-sliders/promo-plin.png" width="20" style="filter: brightness(0) invert(1);">
+                </div>
+            </div>
+            
+            <div class="method-content active" id="c-wallets">
+                <div class="wallet-chips" onclick="event.stopPropagation();">
+                    <div class="wallet-chip active-yape" id="chip-yape" onclick="switchWallet('yape')">Yape</div>
+                    <div class="wallet-chip" id="chip-plin" onclick="switchWallet('plin')">Plin</div>
+                </div>
+
+                <div class="wallet-view active" id="view-yape">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqiuo_VtUXHkWrPFoRmwYowgamrxXtmnMxaGabBfsdhpMJYysVYpoFjL3k33c_PkDXMcwV1D5T0uN1An1Ea9S4F1cHCERsZgPv_dTRVW7GA75def1PNy0_4j8lzGAz1zIGb99q5tnQpFCIlMaSeyUZueYikI4BO8VzX3OtL_W8v0MQIkYTBYgueKhls9Q/s2400/Yape%20prepaso%20sac.png" class="qr-img border-yape">
+                    <div class="yape-number style-yape">962 773 403</div>
+                    <p style="font-size:0.8rem;color:#ccc;margin-top:5px;">Prepaso Sac</p>
+                </div>
+
+                <div class="wallet-view" id="view-plin">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhzKju1CGqC7P7R2ptOKFblMElkeyX_m7All3p9lGCSBTp2CRJ8aXOt7ahkID4GC8AYy69bPGlSHUpuWMvLp94SRT8C_QXKgzG3lB1jEDPclkN71-wPq9iTxyCkeCigCAIcnXSvd0qvJnjA0eypif9QBKI2Sf9Sipi7D1f_D2uLypEMj7ZUrN008AfB-Gs/s1200/Prepaso%20SAC.png" class="qr-img border-plin">
+                    <div class="yape-number style-plin">962 773 403</div>
+                    <p style="font-size:0.8rem;color:#ccc;margin-top:5px;">Prepaso</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="method-box" onclick="setMethod('mp')" id="b-mp">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><b>💳 Tarjeta Débito/Crédito</b><img src="https://images.icon-icons.com/2342/PNG/512/visa_payment_method_card_icon_142746.png" width="50"></div>
+            <div class="method-content" id="c-mp"><div id="mp-inject-box" style="margin-top:15px;"></div></div>
+        </div>
+
+        <div class="method-box" onclick="setMethod('inter')" id="b-inter">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><b>🏦 Depósito / Transferencia </b><img src="https://interbank.pe/documents/20124/147356/ico-app%402x.webp/125aec62-9bcf-65f8-8766-4acfa63e60a6?t=1636737306572" width="30"></div>
+            <div class="method-content" id="c-inter" style="font-size:0.8rem;text-align:left;background:rgba(0,0,0,0.3);padding:15px;border-radius:10px;">
+                <p><b>Prepaso S.A.C.</b></p>
+                <p>Cta: 4203007767322 <button class="copy-btn" onclick="copyTextToClipboard('4203007767322', event)">COPIAR</button></p>
+                <p>CCI: 00342000300776732273 <button class="copy-btn" onclick="copyTextToClipboard('00342000300776732273', event)">COPIAR</button></p>
+            </div>
+        </div>
+
+        <div class="gift-toggle-container">
+            <div style="text-align: left;">
+                <strong style="color: var(--pro-blue);"><i class="fas fa-gift"></i> ¿Es un regalo?</strong>
+                <p style="font-size: 0.75rem; color: #ccc;">Sorprende a un amigo(a).</p>
+            </div>
+            <label class="gift-switch"><input type="checkbox" id="gift-toggle" onchange="toggleGiftMode()"><span class="slider"></span></label>
+        </div>
+        <div id="gift-form-area" class="gift-form">
+            <input type="text" id="gift-name" class="gift-input" placeholder="Nombre de quien recibe">
+            <input type="tel" id="gift-phone" class="gift-input" placeholder="WhatsApp del Afortunado">
+            <div class="gift-options">
+                <p style="font-size:0.8rem;color:var(--pro-blue);margin-bottom:8px;">¿Cómo entregamos?</p>
+                <label style="display:block;color:#ccc;font-size:0.9rem;margin-bottom:5px;"><input type="radio" name="gift-delivery" value="me" checked> Envíenme a mí (Yo se lo doy)</label>
+                <label style="display:block;color:#ccc;font-size:0.9rem;margin-bottom:5px;"><input type="radio" name="gift-delivery" value="direct"> Cachimboz Cupido (Escríbanle)</label>
+                <label style="display:block;color:#ccc;font-size:0.9rem;"><input type="radio" name="gift-delivery" value="anon"> Admirador Secreto</label>
+            </div>
+        </div>
+
+        <button class="btn-apply" onclick="sendWhatsAppProof()"><i class="fab fa-whatsapp"></i> ENVIAR CAPTURA DE PAGO</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzbV7ILE2cRtarBidnOU4X0iY_6ler48hkJuDb4LX00dgsGLKpbPaOwdxHE2bhMqTDAvw/exec"; 
+    const COURSE_CHECK = "ALGEBRA_6"; 
+    const GK = n => `cachimboz_${n}`; 
+    
+    // PRECIOS ACTUALIZADOS Y LÓGICA DE UPGRADE
+    const PRICES = { annual: 120, cycle: 69, month: 30 };
+    // Precios especiales de upgrade calculados (ej. subir de mensual a ciclo te cuesta la diferencia + un extra ligero)
+    const UPGRADES = { cycle_from_month: 49, annual_from_month: 99, annual_from_cycle: 69 };
+    
+    let state = { selectedPlan: 'annual', userType: 'new' }; 
+
+    const elCardAnnual = document.getElementById('card-annual');
+    const elCardCycle = document.getElementById('card-cycle');
+    const elCardMonth = document.getElementById('card-month');
+    const elMainBtn = document.getElementById('main-cta');
+    
+    const elPriceAnnual = document.getElementById('price-annual');
+    const elPriceCycle = document.getElementById('price-cycle');
+
+    window.onload = () => {
+        checkGlobalAccess();
+        updateUI();
+    };
+
+    function checkGlobalAccess() {
+        const exp = localStorage.getItem(GK("premium_exp"));
+        const start = localStorage.getItem(GK("premium_start"));
+        if (exp && new Date(exp) > new Date()) {
+            configureUserUI(start, exp);
+            document.querySelector('.verify-pill-btn').style.display = 'none';
+        }
+    }
+
+    function toggleVerifyBox() {
+        const box = document.getElementById('verify-box');
+        box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    }
+
+    async function verifyUser() {
+        const email = document.getElementById('v-email').value.trim().toLowerCase();
+        const msg = document.getElementById('v-msg');
+        const btn = document.getElementById('btn-verify-action');
+        if(!email.includes('@')) { msg.innerHTML = "<span style='color:red'>Correo inválido</span>"; return; }
+        btn.innerText = "Verificando..."; btn.disabled = true;
+
+        try {
+            const url = `${API_URL}?email=${encodeURIComponent(email)}&course=${encodeURIComponent(COURSE_CHECK)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const now = new Date();
+            const start = data.start ? new Date(data.start) : new Date();
+            const end = data.end || data.exp || data.vencimiento ? new Date(data.end || data.exp || data.vencimiento) : null;
+            
+            if (data.access && end && end > now) {
+                setPremiumGlobal({
+                    email: email, plan: data.plan, start: data.start, vencimiento: data.end || data.exp || data.vencimiento
+                });
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('verify-box').style.display = 'none';
+                document.querySelector('.verify-pill-btn').style.display = 'none';
+                configureUserUI(data.start, end);
+                msg.innerHTML = "";
+            } else {
+                msg.innerHTML = "<span style='color:red'>No tienes suscripción activa.</span>";
+                state.userType = 'new'; resetCards(); updateUI();
+            }
+        } catch (e) { console.error(e); msg.innerText = "Error de conexión"; } 
+        finally { btn.innerText = "Validar Ahora"; btn.disabled = false; }
+    }
+
+    function setPremiumGlobal({email, plan, start, vencimiento}){ 
+        if(!vencimiento) return; 
+        localStorage.setItem(GK("premium_email"), email||""); 
+        localStorage.setItem(GK("premium_plan"), Array.isArray(plan)?plan.join(","):String(plan||"")); 
+        localStorage.setItem(GK("premium_start"), start||""); 
+        localStorage.setItem(GK("premium_exp"), vencimiento); 
+    }
+
+    function configureUserUI(startStr, endStr) {
+        const start = new Date(startStr);
+        const end = new Date(endStr);
+        const planDurationDays = (end - start) / (1000 * 60 * 60 * 24);
+        resetCards();
+        
+        if (planDurationDays >= 300) {
+            // Ya tiene anual, nivel máximo
+            state.userType = 'annual'; 
+            setupUserBar("Plan Anual 🏆", "Nivel Máximo Alcanzado"); 
+            elCardAnnual.classList.add('is-current'); 
+            selectPlan('annual');
+        } else if (planDurationDays >= 40) {
+            // Tiene el ciclo, puede hacer upgrade al anual
+            state.userType = 'cycle'; 
+            setupUserBar("Plan Ciclo (4 Meses)", `Vence: ${end.toLocaleDateString()}`); 
+            applyCycleUserLogic();
+        } else {
+            // Tiene el mensual, puede subir a ciclo o anual
+            state.userType = 'monthly'; 
+            setupUserBar("Plan Mensual", `Vence: ${end.toLocaleDateString()}`); 
+            applyMonthlyUserLogic();
+        }
+    }
+
+    function setupUserBar(title, sub) {
+        const bar = document.getElementById('user-status-bar');
+        document.getElementById('user-plan-name').innerText = title;
+        document.getElementById('user-upgrade-msg').innerText = sub;
+        bar.style.display = 'flex';
+    }
+
+    function resetCards() {
+        elCardAnnual.classList.remove('is-current', 'upgrade-mode');
+        elCardCycle.classList.remove('is-current', 'upgrade-mode');
+        elCardMonth.classList.remove('is-current', 'upgrade-mode');
+        
+        elPriceAnnual.innerText = PRICES.annual;
+        elPriceAnnual.className = "price-big offer-text"; 
+        elPriceCycle.innerText = PRICES.cycle;
+        elPriceCycle.className = "price-big";
+    }
+
+    function applyMonthlyUserLogic() {
+        elCardMonth.classList.add('is-current');
+        elCardCycle.classList.add('upgrade-mode');
+        elCardAnnual.classList.add('upgrade-mode');
+        
+        elPriceCycle.innerText = UPGRADES.cycle_from_month;
+        elPriceCycle.className = "price-big blue-text";
+        elPriceAnnual.innerText = UPGRADES.annual_from_month;
+        elPriceAnnual.className = "price-big blue-text";
+        selectPlan('annual'); // Por defecto se le ofrece saltar al anual
+    }
+
+    function applyCycleUserLogic() {
+        elCardCycle.classList.add('is-current');
+        elCardAnnual.classList.add('upgrade-mode');
+        document.getElementById('badge-annual').innerHTML = "MEJORA AL ANUAL";
+        
+        elPriceAnnual.innerText = UPGRADES.annual_from_cycle;
+        elPriceAnnual.className = "price-big blue-text";
+        selectPlan('annual');
+    }
+
+    function selectPlan(plan) {
+        state.selectedPlan = plan;
+        elCardAnnual.classList.remove('selected'); 
+        elCardCycle.classList.remove('selected'); 
+        elCardMonth.classList.remove('selected');
+        
+        if (plan === 'annual') elCardAnnual.classList.add('selected');
+        else if (plan === 'cycle') elCardCycle.classList.add('selected');
+        else elCardMonth.classList.add('selected');
+        updateUI();
+    }
+
+    function updateUI() {
+        let price = 0; let text = "";
+        
+        if (state.selectedPlan === 'annual') {
+            if (state.userType === 'monthly') price = UPGRADES.annual_from_month;
+            else if (state.userType === 'cycle') price = UPGRADES.annual_from_cycle;
+            else price = PRICES.annual;
+            text = (state.userType === 'monthly' || state.userType === 'cycle') ? `MEJORAR A ANUAL (S/. ${price})` : `PAGAR S/. ${price} (TODO EL 2026)`;
+        } 
+        else if (state.selectedPlan === 'cycle') {
+            price = state.userType === 'monthly' ? UPGRADES.cycle_from_month : PRICES.cycle;
+            text = state.userType === 'monthly' ? `MEJORAR A CICLO (S/. ${price})` : `PAGAR S/. ${price} (PLAN CICLO)`;
+        } 
+        else { 
+            price = PRICES.month; 
+            text = `SUSCRIBIRME (S/. ${price} / MES)`; 
+        }
+        
+        elMainBtn.innerHTML = text;
+    }
+
+    // === LÓGICA DE PAGO Y SWITCHER ===
+    function setMethod(m) {
+        ['wallets','mp','inter'].forEach(x => {
+            document.getElementById('c-'+x).classList.remove('active');
+            document.getElementById('b-'+x).classList.remove('active');
+            document.getElementById('b-'+x).style.borderColor = 'var(--card-border)';
+        });
+        document.getElementById('c-'+m).classList.add('active');
+        document.getElementById('b-'+m).classList.add('active');
+        
+        if(m === 'wallets') {
+            const isYape = document.getElementById('chip-yape').classList.contains('active-yape');
+            document.getElementById('b-wallets').style.borderColor = isYape ? 'var(--yape-color)' : 'var(--plin-color)';
+        } else {
+            document.getElementById('b-'+m).style.borderColor = 'var(--neon-green)';
+        }
+
+        if(m === 'mp') renderMP();
+    }
+
+    function switchWallet(type) {
+        document.getElementById('chip-yape').classList.remove('active-yape');
+        document.getElementById('chip-plin').classList.remove('active-plin');
+        document.getElementById('view-yape').classList.remove('active');
+        document.getElementById('view-plin').classList.remove('active');
+
+        if(type === 'yape') {
+            document.getElementById('chip-yape').classList.add('active-yape');
+            document.getElementById('view-yape').classList.add('active');
+            document.getElementById('b-wallets').style.borderColor = 'var(--yape-color)';
+        } else {
+            document.getElementById('chip-plin').classList.add('active-plin');
+            document.getElementById('view-plin').classList.add('active');
+            document.getElementById('b-wallets').style.borderColor = 'var(--plin-color)';
+        }
+    }
+
+    function renderMP() {
+        const div = document.getElementById('mp-inject-box'); div.innerHTML = "";
+        const s = document.createElement('script'); s.src = "https://www.mercadopago.com.pe/integrations/v1/web-payment-checkout.js";
+        let pid = "662921649-a7315b35-776a-4a2d-bae4-f2fde235beed"; // Default a anual
+        
+        // Aquí deberías colocar tus verdaderos Preferences IDs de MercadoPago para cada plan
+        if(state.selectedPlan === 'annual') pid = "662921649-a7315b35-776a-4a2d-bae4-f2fde235beed";
+        if(state.selectedPlan === 'cycle') pid = "662921649-0b6347aa-225e-4eb8-95f9-cae898f30117"; // Cambiar por tu ID de ciclo
+        if(state.selectedPlan === 'month') pid = "662921649-a2b22de4-ba96-4179-b5b5-20c7a25d0729";
+        
+        s.setAttribute('data-preference-id', pid); s.setAttribute('data-source', 'button'); div.appendChild(s);
+    }
+
+    function toggleGiftMode() {
+        const isGift = document.getElementById('gift-toggle').checked;
+        document.getElementById('gift-form-area').style.display = isGift ? "block" : "none";
+        if(isGift) document.querySelector('.modal-sheet').scrollTo({ top: 1000, behavior: 'smooth' });
+    }
+
+    function openPaymentModal() {
+        let finalAmount = 0;
+        
+        if (state.selectedPlan === 'annual') {
+            if (state.userType === 'monthly') finalAmount = UPGRADES.annual_from_month;
+            else if (state.userType === 'cycle') finalAmount = UPGRADES.annual_from_cycle;
+            else finalAmount = PRICES.annual;
+        } else if (state.selectedPlan === 'cycle') {
+            finalAmount = state.userType === 'monthly' ? UPGRADES.cycle_from_month : PRICES.cycle;
+        } else {
+            finalAmount = PRICES.month;
+        }
+        
+        document.getElementById('modal-final-amount').innerText = "S/. " + finalAmount.toFixed(2);
+        document.getElementById('payment-modal').classList.add('active');
+        setMethod('wallets');
+    }
+
+    function closeAllModals() { document.getElementById('payment-modal').classList.remove('active'); }
+    
+    // Función silenciosa sin alert nativo (se mantiene intacta para la experiencia de usuario)
+    function copyTextToClipboard(t, event) { 
+        event.stopPropagation();
+        navigator.clipboard.writeText(t); 
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.innerText = "COPIADO";
+        btn.style.background = "var(--neon-green)";
+        btn.style.color = "#000";
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = "var(--pro-blue)";
+            btn.style.color = "#fff";
+        }, 1500);
+    }
+
+    function sendWhatsAppProof() {
+        let finalAmount = 0; let concept = "";
+        const isGift = document.getElementById('gift-toggle').checked;
+        
+        if (state.selectedPlan === 'annual') {
+            if (state.userType === 'monthly') { finalAmount = UPGRADES.annual_from_month; concept = "UPGRADE ANUAL DESDE MENSUAL"; }
+            else if (state.userType === 'cycle') { finalAmount = UPGRADES.annual_from_cycle; concept = "UPGRADE ANUAL DESDE CICLO"; }
+            else { finalAmount = PRICES.annual; concept = "PLAN ANUAL 2026"; }
+        } else if (state.selectedPlan === 'cycle') {
+            if (state.userType === 'monthly') { finalAmount = UPGRADES.cycle_from_month; concept = "UPGRADE A CICLO"; }
+            else { finalAmount = PRICES.cycle; concept = "PLAN CICLO 4 MESES"; }
+        } else { 
+            finalAmount = PRICES.month; concept = "PLAN MENSUAL"; 
+        }
+
+        let msg = `Hola Prepaso, pago mi acceso.\n\nConcepto: *${concept}*\nMonto: *S/. ${finalAmount}*`;
+
+        if (isGift) {
+            const giftName = document.getElementById('gift-name').value || "Un Amigo";
+            const giftPhone = document.getElementById('gift-phone').value || "No especificado";
+            const deliveryType = document.querySelector('input[name="gift-delivery"]:checked').value;
+            let deliveryText = deliveryType === 'me' ? "Envíenme el acceso a mí" : (deliveryType === 'direct' ? "Escríbanle de mi parte" : "Escríbanle anónimamente");
+            msg = `🎁 *¡ES UN REGALO!* 🎁\nHola quiero regalar el ${concept}.\n\nPara: *${giftName}*\nWhatsApp del afortunado: ${giftPhone}\n\nInstrucción: ${deliveryText}\n\nAdjunto mi comprobante:`;
+        } else { msg += "\n\nAdjunto mi comprobante:"; }
+
+        // Uso estricto del protocolo nativo y redirección (sin window.open ni target="_blank")
+        window.location.href = "whatsapp://send?phone=51962773403&text=" + encodeURIComponent(msg);
+    }
+</script>
+</body>
+</html>
