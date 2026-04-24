@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cachimboz - Simulacro</title>
+    <link rel="icon" type="image/png" href="images/unnamed.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #161a23;
+            --border-color: #222834;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --primary: #2962ff;
+            --primary-hover: #1e40af;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --gold: #F59E0B;
+            --radius-btn: 50px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Universal */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: rgba(22, 26, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-weight: 800;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+
+        .back-home-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .back-home-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .timer-badge {
+            display: none;
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* MENU HORIZONTAL DE EXÁMENES */
+        #exam-menu-view {
+            margin-top: 60px;
+            padding: 20px 15px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .period-tabs-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .period-tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .period-tab {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            white-space: nowrap;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .period-tab:active {
+            transform: scale(0.95);
+        }
+
+        .period-tab.active {
+            background: rgba(41, 98, 255, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(41, 98, 255, 0.2);
+        }
+
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-refresh {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: var(--radius-btn);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-refresh:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .exam-menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .exam-menu-card:active {
+            transform: scale(0.98);
+        }
+
+        .exam-menu-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+
+        .exam-menu-card.disabled:active {
+            transform: none;
+        }
+
+        .exam-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exam-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .exam-icon {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .exam-menu-card.disabled .exam-icon {
+            color: var(--text-muted);
+        }
+
+        /* Contenedor Principal Examen */
+        main {
+            margin-top: 60px;
+            padding: 20px 15px;
+            padding-bottom: 100px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+
+        /* Tarjeta de Pregunta */
+        .question-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .course-tag {
+            display: inline-block;
+            background-color: rgba(41, 98, 255, 0.15);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        /* Contexto Colapsable */
+        .context-panel {
+            background-color: #1a1f2b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .context-header {
+            padding: 12px 15px;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .context-body {
+            padding: 0 15px 15px 15px;
+            display: none;
+            font-size: 14px;
+            color: var(--text-muted);
+            white-space: pre-line;
+        }
+
+        .context-body.active {
+            display: block;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            white-space: pre-line;
+        }
+
+        .responsive-img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: block;
+        }
+
+        /* Opciones */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: flex-start;
+            white-space: pre-line;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected {
+            background-color: rgba(41, 98, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        .option-btn.correct {
+            background-color: var(--success-bg);
+            border-color: var(--success);
+            box-shadow: 0 0 0 1px var(--success);
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--danger-bg);
+            border-color: var(--danger);
+            opacity: 0.8;
+        }
+
+        /* Caja de Resolución */
+        .resolution-box {
+            margin-top: 20px;
+            background-color: rgba(41, 98, 255, 0.05);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+        }
+
+        .resolution-box h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #res-text {
+            white-space: pre-line;
+        }
+
+        /* Footer Flotante */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 15px;
+            display: none;
+            justify-content: space-between;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .btn-grid {
+            flex: 0 0 auto;
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--border-color);
+            border-radius: 8px;
+            font-size: 20px;
+            color: white;
+        }
+
+        /* Modales Custom */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .modal-text {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Toast */
+        .premium-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: white;
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            z-index: 11000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: max-content;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .premium-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: all;
+        }
+
+        /* Cuadrícula de preguntas */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 10px;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .grid-item {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .grid-item.answered {
+            background: rgba(41, 98, 255, 0.2);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .grid-item.current {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Loading */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            color: var(--primary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(41, 98, 255, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <h3 id="loading-text">Cargando base de datos...</h3>
+    </div>
+
+    <div class="premium-toast" id="premium-toast">
+        <i class="fas fa-info-circle" style="color:var(--primary)"></i>
+        <span id="toast-text">Notificación</span>
+    </div>
+
+    <header>
+        <div class="header-title">
+            <a href="index.html" class="back-home-btn"><i class="fas fa-arrow-left"></i></a>
+            Simulacros
+        </div>
+        <div class="timer-badge" id="timer-display">
+            <i class="fas fa-stopwatch"></i> 03:00:00
+        </div>
+    </header>
+
+    <div id="exam-menu-view">
+        <h2 style="margin-bottom:5px; font-weight:900; font-size:24px; color:white; letter-spacing: -0.5px;">Elige tu
+            Simulacro</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom: 20px;">Desliza para ver exámenes por año.</p>
+
+        <div class="period-tabs-container" id="period-tabs"></div>
+
+        <div class="action-header">
+            <span style="font-weight: 800; color: white; font-size: 16px;">Selecciona el Área</span>
+            <button class="btn-refresh" onclick="forceUpdateCurrentExamDB()">
+                <i class="fas fa-sync-alt"></i> Sincronizar
+            </button>
+        </div>
+
+        <div id="exam-list"></div>
+    </div>
+
+    <main id="exam-area">
+        <div id="question-view">
+            <div class="question-card">
+                <div class="course-tag" id="q-course">Cargando...</div>
+                <div class="course-tag" id="q-theme"
+                    style="background:var(--border-color); color:var(--text-muted); margin-left:5px;"></div>
+
+                <div class="context-panel" id="context-container" style="display: none;">
+                    <div class="context-header" onclick="toggleContext()">
+                        <span>📄 Ver Texto / Contexto Base</span>
+                        <span id="context-arrow">▼</span>
+                    </div>
+                    <div class="context-body" id="context-body">
+                        <p id="context-text"></p>
+                        <img id="context-img" class="responsive-img" style="display:none;" src="" alt="Contexto">
+                    </div>
+                </div>
+
+                <div class="question-text" id="q-text"></div>
+                <div id="q-math" class="question-text"></div>
+                <img id="q-img" class="responsive-img" style="display:none;" src="" alt="Pregunta">
+
+                <div class="options-container" id="options-container"></div>
+
+                <div class="resolution-box" id="resolution-box">
+                    <h4>💡 Resolución:</h4>
+                    <div id="res-text" style="font-size: 14px; margin-bottom: 10px;"></div>
+                    <div id="res-math" style="font-size: 14px; margin-bottom: 10px;"></div>
+                    <img id="res-img" class="responsive-img" style="display:none;" src="" alt="Resolución">
+                </div>
+            </div>
+        </div>
+
+        <div id="results-view" style="display: none;"></div>
+    </main>
+
+    <div class="bottom-bar" id="bottom-bar">
+        <button class="btn btn-secondary" id="btn-prev" onclick="navQuestion(-1)"><i
+                class="fas fa-arrow-left"></i></button>
+        <button class="btn-grid" onclick="openGridModal()"><i class="fas fa-th-large"></i></button>
+        <button class="btn btn-primary" id="btn-next" onclick="navQuestion(1)">Siguiente <i
+                class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <div class="modal-overlay" id="custom-modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modal-title">Título</div>
+            <div class="modal-text" id="modal-text">Mensaje</div>
+            <div class="modal-buttons" id="modal-buttons"></div>
+        </div>
+    </div>
+
+    <script type="module" src="./js/simulacros.js"></script>
+</body>
+
+</html>

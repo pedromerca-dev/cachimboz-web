@@ -5,13 +5,13 @@ import {
   getDocs,
   query,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+//import "./uploadSimulacro.js";
 
 let ALL_COURSES = [];
 
 //-------------firebase----------------/
 async function loadCourses() {
   try {
-    console.log("🔥 Cargando cursos...");
     const q = query(collection(db, "courses"));
 
     const snapshot = await getDocs(q);
@@ -26,7 +26,6 @@ async function loadCourses() {
         link: `clase.html?id=${doc.id}`,
       };
     });
-    console.log("✅ Cursos cargados:", ALL_COURSES);
   } catch (error) {
     console.error("🔥 ERROR FIREBASE:", error);
   }
@@ -85,6 +84,16 @@ function renderHome() {
                         Ir a la lección →
                     </a>
                 </div>
+               <a href="./simulacros.html"
+                class="flex items-center justify-center gap-3 bg-white text-cachimboz-mid
+                px-5 py-4 rounded-full font-semibold w-full mt-4 shadow
+                hover:bg-slate-100 transition">
+                <span class="flex items-center justify-center w-7 h-7 border-2 border-purple-800 rounded-full text-sm">
+                ⏱
+                </span>
+
+        Jugar y aprender ahora
+    </a>
             </section>
 
             <section>
