@@ -594,3 +594,27 @@ function showToast(text) {
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 4000);
 }
+
+Object.assign(window, {
+  checkAnswer,
+  nextQuestionManual,
+  startQuiz,
+  closeQuiz,
+  toggleSidebar,
+  switchTab,
+  viralShared,
+  closeViral,
+  handleTutorClick,
+  openFavorites,
+  toggleCurrentFavorite,
+  attemptStartQuiz,
+  openPDF,
+  prevLesson,
+  nextLesson,
+  closeSales,
+  toggleVerify,
+  verifySub,
+  viralShared,
+  closeViral,
+  downloadTopicPDF,
+});
