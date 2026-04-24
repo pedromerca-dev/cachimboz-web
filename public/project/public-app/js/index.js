@@ -1,42 +1,64 @@
+//-------------IMPORTS firebase----------------/
+import { db } from "./services/firebase.js";
+import {
+  collection,
+  getDocs,
+  query,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // --- 1. CONFIGURACIÓN DE ENLACES WEB ---
-    // Aquí definimos a qué ID de curso apunta cada botón
-    const ALL_COURSES = [
-    {id: 'aritmetica', name: 'Aritmética', icon: '🧮', link: 'clase.html?id=aritmetica' },
-    {id: 'algebra', name: 'Álgebra', icon: '📐', link: 'clase.html?id=algebra' },
-    {id: 'competencia', name: 'Lenguaje', icon: '📝', link: 'clase.html?id=lenguaje' },
-    {id: 'fisica', name: 'Física', icon: '⚛️', link: 'clase.html?id=fisica' },
-    {id: 'quimica', name: 'Química', icon: '🧪', link: 'clase.html?id=quimica' },
-    {id: 'geo_trigo', name: 'Geometría y Trig.', icon: '📏', link: 'clase.html?id=geometria' },
-    {id: 'biologia', name: 'Biología', icon: '🧬', link: 'clase.html?id=biologia' },
-    {id: 'geografia', name: 'Geografía', icon: '🌐', link: 'clase.html?id=geografia' },
-    {id: 'historia', name: 'Historia', icon: '📜', link: 'clase.html?id=historia' },
-    {id: 'economia', name: 'Economía', icon: '💹', link: 'clase.html?id=economia' },
-    {id: 'civica', name: 'Cívica', icon: '🏛️', link: 'clase.html?id=civica' },
-    {id: 'psicologia', name: 'Psicología', icon: '🔱', link: 'clase.html?id=psicologia' },
-    {id: 'filosofia', name: 'Filosofía', icon: '🤔', link: 'clase.html?id=filosofia' }
-    ];
+let ALL_COURSES = [];
 
-    // Estado simplificado (Directo al Home)
-    let appState = {
-        currentView: 'home', // FORZADO AL HOME
-    formData: {Nombre: "Cachimbo" }, // Nombre por defecto si no hay registro
-    userSelection: {university: 'UNSAAC', area: 'ingenieria' } // Valores por defecto
-        };
+//-------------firebase----------------/
+async function loadCourses() {
+  try {
+    console.log("🔥 Cargando cursos...");
+    const q = query(collection(db, "courses"));
 
-    function initApp() {
-            // Intentar recuperar datos guardados si existen
-            const savedData = localStorage.getItem('formData');
-    if(savedData) appState.formData = JSON.parse(savedData);
+    const snapshot = await getDocs(q);
 
-    renderHome();
-        }
+    ALL_COURSES = snapshot.docs.map((doc) => {
+      const data = doc.data();
 
-    function renderHome() {
-            const userName = appState.formData.Nombre.split(' ')[0];
-    const streak = calculateStreak();
+      return {
+        id: doc.id,
+        name: data.curso,
+        icon: data.icon || getCourseIcon(data.curso),
+        link: `clase.html?id=${doc.id}`,
+      };
+    });
+    console.log("✅ Cursos cargados:", ALL_COURSES);
+  } catch (error) {
+    console.error("🔥 ERROR FIREBASE:", error);
+  }
+}
+//---------------------------///
 
-    document.getElementById('app').innerHTML = `
+// Estado simplificado (Directo al Home)
+let appState = {
+  currentView: "home", // FORZADO AL HOME
+  formData: {
+    Nombre: "Cachimbo",
+  }, // Nombre por defecto si no hay registro
+  userSelection: {
+    university: "UNSAAC",
+    area: "ingenieria",
+  }, // Valores por defecto
+};
+
+async function initApp() {
+  // Intentar recuperar datos guardados si existen
+  const savedData = localStorage.getItem("formData");
+  if (savedData) appState.formData = JSON.parse(savedData);
+  await loadCourses();
+
+  renderHome();
+}
+
+function renderHome() {
+  const userName = appState.formData.Nombre.split(" ")[0];
+  const streak = calculateStreak();
+
+  document.getElementById("app").innerHTML = `
     <div class="max-w-7xl mx-auto p-6 sm:p-8">
         <div class="space-y-6 sm:space-y-8">
 
@@ -68,7 +90,8 @@
             <section>
                 <h3 class="text-xl font-bold text-white mb-4">Cursos completos</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                    ${ALL_COURSES.map(course => `
+                    ${ALL_COURSES.map(
+                      (course) => `
                                     <a href="${course.link}" class="bg-black/20 p-4 rounded-2xl shadow-sm hover:bg-black/30 transition-all group backdrop-blur-sm course-link" onclick="saveLastCourse('${course.name}', '${course.link}')">
                                         <div class="w-12 h-12 bg-cachimboz-light/20 rounded-lg flex items-center justify-center mb-3 group-hover:bg-cachimboz-light/30 transition-colors">
                                             <span class="text-2xl">${course.icon}</span>
@@ -76,7 +99,8 @@
                                         <h4 class="font-bold text-white text-lg">${course.name}</h4>
                                         <span class="text-xs font-semibold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">Disponible</span>
                                     </a>
-                                `).join('')}
+                                `,
+                    ).join("")}
                 </div>
             </section>
 
@@ -85,27 +109,48 @@
     </div>
     `;
 
-    loadLastCourse();
-        }
+  loadLastCourse();
+}
 
-    function calculateStreak() {
-            // Lógica simple de racha
-            return localStorage.getItem('streak') || 1;
-        }
+function calculateStreak() {
+  // Lógica simple de racha
+  return localStorage.getItem("streak") || 1;
+}
 
-    function saveLastCourse(name, link) {
-        localStorage.setItem('lastCourseName', name);
-    localStorage.setItem('lastCourseLink', link);
-        }
+function saveLastCourse(name, link) {
+  localStorage.setItem("lastCourseName", name);
+  localStorage.setItem("lastCourseLink", link);
+}
 
-    function loadLastCourse() {
-            const savedName = localStorage.getItem('lastCourseName');
-    const savedLink = localStorage.getItem('lastCourseLink');
-    if(savedName && savedLink) {
-        document.getElementById('last-course-name').textContent = savedName;
-    document.getElementById('last-course-link').href = savedLink;
-    document.getElementById('last-course-link').textContent = "Continuar " + savedName + " →";
-            }
-        }
+function loadLastCourse() {
+  const savedName = localStorage.getItem("lastCourseName");
+  const savedLink = localStorage.getItem("lastCourseLink");
+  if (savedName && savedLink) {
+    document.getElementById("last-course-name").textContent = savedName;
+    document.getElementById("last-course-link").href = savedLink;
+    document.getElementById("last-course-link").textContent =
+      "Continuar " + savedName + " →";
+  }
+}
 
-    document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener("DOMContentLoaded", initApp);
+
+function getCourseIcon(name) {
+  if (!name) return "📘";
+  const n = name.toLowerCase();
+
+  if (n.includes("arit")) return "🧮";
+  if (n.includes("alge")) return "📐";
+  if (n.includes("leng")) return "✍️";
+  if (n.includes("fis")) return "⚛️";
+  if (n.includes("quim")) return "🧪";
+  if (n.includes("geo")) return "🌍";
+  if (n.includes("hist")) return "📜";
+  if (n.includes("eco")) return "📊";
+  if (n.includes("bio")) return "🧬";
+  if (n.includes("civ")) return "🏛️";
+  if (n.includes("psi")) return "🧠";
+  if (n.includes("fil")) return "🤔";
+
+  return "📘";
+}
