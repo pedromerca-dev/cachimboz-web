@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cachimboz Clase</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
+
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="./css/clase.css">
-    
+
 </head>
+
 <body>
 
     <header class="header">
@@ -20,7 +22,7 @@
                 <a href="index.html" class="back-home-btn">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-                
+
                 <button class="menu-toggle" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
                     <span id="course-title-display">Curso</span>
@@ -46,7 +48,7 @@
                 <span id="sidebar-course-name">Curso</span>
                 <i class="fas fa-times" onclick="toggleSidebar()" style="cursor:pointer; padding:5px;"></i>
             </div>
-            
+
             <div class="progress-container">
                 <div class="progress-bar">
                     <div class="progress-fill" id="sidebar-progress-fill"></div>
@@ -82,7 +84,8 @@
                     <div id="quiz-lock" class="lock-overlay" style="display:none;"><i class="fas fa-lock"></i></div>
                     <div class="action-icon t-quiz"><i class="fas fa-brain"></i></div>
                     <div style="font-weight:700; font-size:15px; color:white;">Banco Preguntas</div>
-                    <div style="font-size:11px; opacity:0.7; color:var(--text-sec);" id="quiz-subtitle">Práctica Intensiva</div>
+                    <div style="font-size:11px; opacity:0.7; color:var(--text-sec);" id="quiz-subtitle">Práctica
+                        Intensiva</div>
                 </div>
                 <div class="action-card" id="pdf-card" onclick="openPDF()">
                     <div id="pdf-lock" class="lock-overlay"><i class="fas fa-lock"></i></div>
@@ -92,8 +95,10 @@
                 </div>
             </div>
             <div class="nav-grid">
-                <button class="nav-btn" id="btn-prev" onclick="prevLesson()"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button class="nav-btn" id="btn-next" onclick="nextLesson()">Siguiente <i class="fas fa-arrow-right"></i></button>
+                <button class="nav-btn" id="btn-prev" onclick="prevLesson()"><i class="fas fa-arrow-left"></i>
+                    Anterior</button>
+                <button class="nav-btn" id="btn-next" onclick="nextLesson()">Siguiente <i
+                        class="fas fa-arrow-right"></i></button>
             </div>
         </div>
     </div>
@@ -109,22 +114,35 @@
                 <p style="font-size:12px; margin-bottom:12px; text-align:center; color:white;">Nivel de Preparación</p>
                 <div class="bar-row">
                     <span class="bar-label">Gratis</span>
-                    <div class="bar-track"><div class="bar-val" style="width:20%; background:#9ca3af;"></div></div>
+                    <div class="bar-track">
+                        <div class="bar-val" style="width:20%; background:#9ca3af;"></div>
+                    </div>
                 </div>
                 <div class="bar-row">
                     <span class="bar-label" style="color:var(--success); font-weight:700;">Premium</span>
-                    <div class="bar-track"><div class="bar-val" style="width:95%; background:var(--success); box-shadow:0 0 10px var(--success);"></div></div>
+                    <div class="bar-track">
+                        <div class="bar-val"
+                            style="width:95%; background:var(--success); box-shadow:0 0 10px var(--success);"></div>
+                    </div>
                 </div>
             </div>
-            <p style="text-align:center; font-size:32px; font-weight:800; margin-bottom:25px; color:white;">S/30.00 <span style="font-size:12px; font-weight:400; color:#ccc;">/único</span></p>
-            
-            <a href="premium.html" class="nav-btn" style="background:white; color:black; width:100%; margin-bottom:10px; text-decoration:none; justify-content:center; border-radius:50px;">DESBLOQUEAR TODO</a>
-            
-            <button class="btn-verify" onclick="toggleVerify()"><i class="fas fa-user-check"></i> ¿Ya tienes cuenta? Verificar</button>
-            
-            <div id="verify-box" style="display:none; margin-top:15px; background:rgba(0,0,0,0.3); padding:15px; border-radius:12px;">
-                <input type="email" id="v-email" placeholder="Tu correo..." style="width:100%; padding:12px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; border-radius:8px; margin-bottom:10px; outline:none;">
-                <button onclick="verifySub()" id="btn-verify-action" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:700;">Validar Ahora</button>
+            <p style="text-align:center; font-size:32px; font-weight:800; margin-bottom:25px; color:white;">S/30.00
+                <span style="font-size:12px; font-weight:400; color:#ccc;">/único</span></p>
+
+            <a href="premium.html" class="nav-btn"
+                style="background:white; color:black; width:100%; margin-bottom:10px; text-decoration:none; justify-content:center; border-radius:50px;">DESBLOQUEAR
+                TODO</a>
+
+            <button class="btn-verify" onclick="toggleVerify()"><i class="fas fa-user-check"></i> ¿Ya tienes cuenta?
+                Verificar</button>
+
+            <div id="verify-box"
+                style="display:none; margin-top:15px; background:rgba(0,0,0,0.3); padding:15px; border-radius:12px;">
+                <input type="email" id="v-email" placeholder="Tu correo..."
+                    style="width:100%; padding:12px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; border-radius:8px; margin-bottom:10px; outline:none;">
+                <button onclick="verifySub()" id="btn-verify-action"
+                    style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:700;">Validar
+                    Ahora</button>
                 <div id="v-msg" style="font-size:11px; margin-top:8px; text-align:center; color:#ccc;"></div>
             </div>
         </div>
@@ -135,21 +153,26 @@
         <div class="viral-img-top"><i class="fas fa-rocket"></i></div>
         <div class="viral-body">
             <h3 style="margin-bottom:10px; font-weight:800; font-size:20px; color:white;">🍀 El Karma del Cachimbo</h3>
-            <p style="font-size:14px; opacity:0.8; margin-bottom:25px; line-height:1.5; color:#ddd;">Estás avanzando rápido. <br><br>¡Dale el dato a un amigo! Ayudar trae buena suerte para el examen.</p>
-            <button class="btn-share-main" onclick="viralShared()"><i class="fab fa-whatsapp"></i> Pasar el dato a un amigo</button>
+            <p style="font-size:14px; opacity:0.8; margin-bottom:25px; line-height:1.5; color:#ddd;">Estás avanzando
+                rápido. <br><br>¡Dale el dato a un amigo! Ayudar trae buena suerte para el examen.</p>
+            <button class="btn-share-main" onclick="viralShared()"><i class="fab fa-whatsapp"></i> Pasar el dato a un
+                amigo</button>
             <button class="btn-share-sec" onclick="closeViral()">Me arriesgaré a estudiar solo</button>
         </div>
     </div>
 
     <div class="quiz-modal" id="quiz-modal">
         <div class="quiz-nav">
-            <span style="font-weight:800; font-size:16px; color:white;"><i class="fas fa-graduation-cap" style="color:var(--primary)"></i> Examen</span>
-            
+            <span style="font-weight:800; font-size:16px; color:white;"><i class="fas fa-graduation-cap"
+                    style="color:var(--primary)"></i> Examen</span>
+
             <div style="display:flex; align-items:center;">
                 <button onclick="downloadTopicPDF()" class="btn-topic-pdf">
                     <i class="fas fa-file-pdf"></i> PDF <i class="fas fa-download" style="font-size:10px;"></i>
                 </button>
-                <button onclick="closeQuiz()" style="background:rgba(255,255,255,0.1); border:none; color:white; width:36px; height:36px; border-radius:50%; cursor:pointer;"><i class="fas fa-times"></i></button>
+                <button onclick="closeQuiz()"
+                    style="background:rgba(255,255,255,0.1); border:none; color:white; width:36px; height:36px; border-radius:50%; cursor:pointer;"><i
+                        class="fas fa-times"></i></button>
             </div>
         </div>
         <div class="quiz-content" id="quiz-container">
@@ -161,8 +184,9 @@
         <span id="toast-text">¡Bienvenido Premium! Todo desbloqueado.</span>
     </div>
 
-    
+
 </body>
 
-    <script type="module" src="./js/app.js"></script>
+<script type="module" src="./js/app.js"></script>
+
 </html>
