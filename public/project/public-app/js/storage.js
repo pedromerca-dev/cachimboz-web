@@ -27,3 +27,12 @@ export function setPremiumGlobal({ email, plan, start, vencimiento }) {
   localStorage.setItem(GK("premium_start"), start || "");
   localStorage.setItem(GK("premium_exp"), vencimiento);
 }
+
+export function getLastCourse() {
+  const raw = localStorage.getItem("lastCourse");
+  return raw ? JSON.parse(raw) : null;
+}
+
+export function saveLastCourseStorage(name, link) {
+  localStorage.setItem("lastCourse", JSON.stringify({ name, link }));
+}

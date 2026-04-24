@@ -5,6 +5,9 @@ import {
   getDocs,
   query,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+//-------------------------//
+import { getLastCourse, saveLastCourseStorage } from "./storage.js";
 //import "./uploadSimulacro.js";
 
 let ALL_COURSES = [];
@@ -101,7 +104,7 @@ function renderHome() {
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
                     ${ALL_COURSES.map(
                       (course) => `
-                                    <a href="${course.link}" class="bg-black/20 p-4 rounded-2xl shadow-sm hover:bg-black/30 transition-all group backdrop-blur-sm course-link" onclick="saveLastCourse('${course.name}', '${course.link}')">
+                                    <a href="${course.link}" class="bg-black/20 p-4 rounded-2xl shadow-sm hover:bg-black/30 transition-all group backdrop-blur-sm course-link" data-name="${course.name}" data-link="${course.link}">
                                         <div class="w-12 h-12 bg-cachimboz-light/20 rounded-lg flex items-center justify-center mb-3 group-hover:bg-cachimboz-light/30 transition-colors">
                                             <span class="text-2xl">${course.icon}</span>
                                         </div>
@@ -117,7 +120,14 @@ function renderHome() {
         </div>
     </div>
     `;
+  document.querySelectorAll(".course-link").forEach((el) => {
+    el.addEventListener("click", () => {
+      const name = el.dataset.name;
+      const link = el.dataset.link;
 
+      saveLastCourseStorage(name, link);
+    });
+  });
   loadLastCourse();
 }
 
@@ -126,20 +136,36 @@ function calculateStreak() {
   return localStorage.getItem("streak") || 1;
 }
 
-function saveLastCourse(name, link) {
-  localStorage.setItem("lastCourseName", name);
-  localStorage.setItem("lastCourseLink", link);
-}
-
 function loadLastCourse() {
-  const savedName = localStorage.getItem("lastCourseName");
-  const savedLink = localStorage.getItem("lastCourseLink");
-  if (savedName && savedLink) {
-    document.getElementById("last-course-name").textContent = savedName;
-    document.getElementById("last-course-link").href = savedLink;
-    document.getElementById("last-course-link").textContent =
-      "Continuar " + savedName + " →";
+  const last = getLastCourse();
+
+  const nameEl = document.getElementById("last-course-name");
+  const linkEl = document.getElementById("last-course-link");
+  const section = document.getElementById("continue-section");
+
+  console.log("LAST:", last); // DEBUG
+
+  if (!nameEl || !linkEl || !section) {
+    console.warn("elements not found");
+    return;
   }
+
+  // 🔥 SI NO HAY DATA → ocultar
+  if (!last) {
+    section.style.display = "block";
+
+    nameEl.textContent = "Empieza un curso";
+    linkEl.href = "#";
+    linkEl.textContent = "Explorar cursos ↓";
+    return;
+  }
+
+  // 🔥 SI HAY DATA → SIEMPRE mostrar
+  section.style.display = "block";
+
+  nameEl.textContent = last.name || "Curso";
+  linkEl.href = last.link || "#";
+  linkEl.textContent = `Continuar ${last.name || ""} →`;
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
