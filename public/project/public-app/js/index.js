@@ -48,11 +48,12 @@ let appState = {
 };
 
 async function initApp() {
+  renderLoading();
   // Intentar recuperar datos guardados si existen
   const savedData = localStorage.getItem("formData");
   if (savedData) appState.formData = JSON.parse(savedData);
-  await loadCourses();
 
+  await loadCourses();
   renderHome();
 }
 
@@ -188,4 +189,32 @@ function getCourseIcon(name) {
   if (n.includes("fil")) return "🤔";
 
   return "📘";
+}
+function renderLoading() {
+  document.getElementById("app").innerHTML = `
+    <div class="splash">
+      
+      <div class="logo">
+        🎓
+      </div>
+
+      <h1 class="title">CACHIMBOZ</h1>
+      <p class="subtitle">Tu academia, tu futuro</p>
+
+      <div class="book">📖</div>
+
+      <div class="progress">
+        <div class="progress-bar"></div>
+      </div>
+
+      <p class="loading-text">Cargando contenido...</p>
+
+      <div class="badges">
+        <span>🚀 Rápido</span>
+        <span>🔒 Seguro</span>
+        <span>🎯 Efectivo</span>
+      </div>
+
+    </div>
+  `;
 }
