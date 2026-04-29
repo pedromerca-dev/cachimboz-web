@@ -25,7 +25,6 @@ async function loadCourses() {
 
       if (Date.now() - timestamp < CACHE_TIME) {
         ALL_COURSES = data;
-        console.log("⚡ usando cache");
         return;
       }
     }
@@ -177,8 +176,6 @@ function loadLastCourse() {
   const nameEl = document.getElementById("last-course-name");
   const linkEl = document.getElementById("last-course-link");
   const section = document.getElementById("continue-section");
-
-  console.log("LAST:", last); // DEBUG
 
   if (!nameEl || !linkEl || !section) {
     console.warn("elements not found");

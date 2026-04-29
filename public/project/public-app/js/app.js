@@ -29,6 +29,10 @@ let app = {
   quizUsed: {},
 };
 
+const COURSE_CACHE_KEY = (id) => `course_cache_${id}`;
+const CACHE_TIME = 1000 * 60 * 60;
+let usedCache = false;
+
 function setCourseAccess({ email, vencimiento }) {
   if (!vencimiento) return;
   localStorage.setItem(CK("access_email"), email || "");
@@ -37,9 +41,39 @@ function setCourseAccess({ email, vencimiento }) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   loadStorage();
-  await fetchData();
-  renderSidebar();
-  loadLesson(app.currentIdx, false);
+
+  const id = new URLSearchParams(window.location.search).get("id") || "algebra";
+  const cachedRaw = localStorage.getItem(COURSE_CACHE_KEY(id));
+
+  let cachedData = null;
+
+  if (cachedRaw) {
+    const parsed = JSON.parse(cachedRaw);
+    cachedData = parsed.data;
+
+    applyCourseData(cachedData);
+    usedCache = true;
+
+    renderSidebar();
+    loadLesson(app.currentIdx, false);
+  }
+
+  fetchData().then((freshData) => {
+    if (!freshData) return;
+
+    // Si NO hubo cache → render normal
+    if (!usedCache) {
+      renderSidebar();
+      loadLesson(app.currentIdx, false);
+      return;
+    }
+
+    // Si hubo cache → solo actualizar si cambió
+    if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
+      renderSidebar();
+      loadLesson(app.currentIdx, false);
+    }
+  });
 });
 
 function loadStorage() {
@@ -64,53 +98,22 @@ async function fetchData() {
     const ref = doc(db, "courses", id);
     const snap = await getDoc(ref);
 
-    if (!snap.exists()) {
-      throw new Error("Curso no existe");
-    }
+    if (!snap.exists()) throw new Error("Curso no existe");
 
     const data = snap.data();
 
-    // 🔥 ESTE ES TU NUEVO cursoActivo
-    const cursoActivo = data;
+    applyCourseData(data);
 
-    // ✅ UI (ANTES lo hacías con cursoActivo)
-    document.title = "Cachimboz - " + data.curso;
-
-    const titleDisplay = document.getElementById("course-title-display");
-    if (titleDisplay) titleDisplay.textContent = data.curso;
-
-    const sidebarTitle = document.getElementById("sidebar-course-name");
-    if (sidebarTitle) sidebarTitle.textContent = data.curso;
-
-    // ✅ DATA PRINCIPAL
-    app.data = data.temas;
-
-    let globalIndex = 0;
-    app.flatList = []; // 🔥 importante resetear
-
-    app.data.forEach((tema, tIdx) => {
-      const preguntasTema = tema.preguntas || [];
-
-      tema.videos.forEach((vid, vIdx) => {
-        const preguntasFinales =
-          vid.preguntas && vid.preguntas.length > 0
-            ? vid.preguntas
-            : preguntasTema;
-
-        app.flatList.push({
-          ...vid,
-          tema: tema.titulo,
-          preguntas: preguntasFinales,
-          globalId: globalIndex,
-          tIdx,
-          vIdx,
-        });
-
-        globalIndex++;
-      });
-    });
+    //  guardar cache
+    localStorage.setItem(
+      COURSE_CACHE_KEY(id),
+      JSON.stringify({
+        data,
+        timestamp: Date.now(),
+      }),
+    );
   } catch (e) {
-    console.error("🔥 ERROR FIREBASE:", e);
+    console.error(e);
   }
 }
 
@@ -593,6 +596,43 @@ function showToast(text) {
   document.getElementById("toast-text").innerText = text;
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 4000);
+}
+
+function applyCourseData(data) {
+  document.title = "Cachimboz - " + data.curso;
+
+  const titleDisplay = document.getElementById("course-title-display");
+  if (titleDisplay) titleDisplay.textContent = data.curso;
+
+  const sidebarTitle = document.getElementById("sidebar-course-name");
+  if (sidebarTitle) sidebarTitle.textContent = data.curso;
+
+  app.data = data.temas;
+
+  let globalIndex = 0;
+  app.flatList = [];
+
+  app.data.forEach((tema, tIdx) => {
+    const preguntasTema = tema.preguntas || [];
+
+    tema.videos.forEach((vid, vIdx) => {
+      const preguntasFinales =
+        vid.preguntas && vid.preguntas.length > 0
+          ? vid.preguntas
+          : preguntasTema;
+
+      app.flatList.push({
+        ...vid,
+        tema: tema.titulo,
+        preguntas: preguntasFinales,
+        globalId: globalIndex,
+        tIdx,
+        vIdx,
+      });
+
+      globalIndex++;
+    });
+  });
 }
 
 Object.assign(window, {
