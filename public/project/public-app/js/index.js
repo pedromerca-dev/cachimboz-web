@@ -95,7 +95,7 @@ function renderHome() {
                 ⏱
                 </span>
 
-        Jugar y aprender ahora
+         Comenzar simulacros
     </a>
             </section>
 
