@@ -11,12 +11,27 @@ import { getLastCourse, saveLastCourseStorage } from "./storage.js";
 //import "./uploadSimulacro.js";
 
 let ALL_COURSES = [];
+const CACHE_KEY = "courses_cache";
+const CACHE_TIME = 1000 * 60 * 60; // 1 hora
 
 //-------------firebase----------------/
 async function loadCourses() {
   try {
-    const q = query(collection(db, "courses"));
+    // intentar cache
+    const cached = localStorage.getItem(CACHE_KEY);
 
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+
+      if (Date.now() - timestamp < CACHE_TIME) {
+        ALL_COURSES = data;
+        console.log("⚡ usando cache");
+        return;
+      }
+    }
+
+    // fetch real
+    const q = query(collection(db, "courses"));
     const snapshot = await getDocs(q);
 
     ALL_COURSES = snapshot.docs.map((doc) => {
@@ -29,6 +44,15 @@ async function loadCourses() {
         link: `clase.html?id=${doc.id}`,
       };
     });
+
+    // guardar cache
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        data: ALL_COURSES,
+        timestamp: Date.now(),
+      }),
+    );
   } catch (error) {
     console.error("🔥 ERROR FIREBASE:", error);
   }
@@ -53,8 +77,18 @@ async function initApp() {
   const savedData = localStorage.getItem("formData");
   if (savedData) appState.formData = JSON.parse(savedData);
 
-  await loadCourses();
-  renderHome();
+  const cached = localStorage.getItem("courses_cache");
+
+  if (cached) {
+    const { data } = JSON.parse(cached);
+    ALL_COURSES = data;
+
+    renderHome();
+  }
+
+  loadCourses().then(() => {
+    renderHome();
+  });
 }
 
 function renderHome() {
