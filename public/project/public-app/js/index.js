@@ -81,11 +81,12 @@ async function initApp() {
   if (cached) {
     const { data } = JSON.parse(cached);
     ALL_COURSES = data;
-
+    renderLoading();
     renderHome();
   }
 
   loadCourses().then(() => {
+    renderLoading();
     renderHome();
   });
 }
