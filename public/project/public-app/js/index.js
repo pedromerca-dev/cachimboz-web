@@ -13,6 +13,8 @@ import { getLastCourse, saveLastCourseStorage } from "./storage.js";
 let ALL_COURSES = [];
 const CACHE_KEY = "courses_cache";
 const CACHE_TIME = 1000 * 60 * 60; // 1 hora
+let cachedData = null;
+let usedCache = false;
 
 //-------------firebase----------------/
 async function loadCourses() {
@@ -25,7 +27,6 @@ async function loadCourses() {
 
       if (Date.now() - timestamp < CACHE_TIME) {
         ALL_COURSES = data;
-        console.log("⚡ usando cache");
         return;
       }
     }
@@ -177,8 +178,6 @@ function loadLastCourse() {
   const nameEl = document.getElementById("last-course-name");
   const linkEl = document.getElementById("last-course-link");
   const section = document.getElementById("continue-section");
-
-  console.log("LAST:", last); // DEBUG
 
   if (!nameEl || !linkEl || !section) {
     console.warn("elements not found");
