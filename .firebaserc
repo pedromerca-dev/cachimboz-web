@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "cachimboz-pro": "cachimboz-pro"
+  },
+  "targets": {
+    "cachimboz-pro": {
+      "hosting": {
+        "landing": [
+          "cachimboz-landing"
+        ],
+        "app": [
+          "cachimboz-pro"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
