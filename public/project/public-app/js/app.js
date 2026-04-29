@@ -104,7 +104,6 @@ async function fetchData() {
 
     applyCourseData(data);
 
-    //  guardar cache
     localStorage.setItem(
       COURSE_CACHE_KEY(id),
       JSON.stringify({
@@ -112,6 +111,8 @@ async function fetchData() {
         timestamp: Date.now(),
       }),
     );
+
+    return data;
   } catch (e) {
     console.error(e);
   }
