@@ -13,8 +13,6 @@ import { getLastCourse, saveLastCourseStorage } from "./storage.js";
 let ALL_COURSES = [];
 const CACHE_KEY = "courses_cache";
 const CACHE_TIME = 1000 * 60 * 60; // 1 hora
-let cachedData = null;
-let usedCache = false;
 
 //-------------firebase----------------/
 async function loadCourses() {
